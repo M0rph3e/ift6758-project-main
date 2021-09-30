@@ -1,0 +1,5 @@
+# Prerequisites
+*.pyc
+*.npy
+*.pkl
+notebooks/.ipynb_checkpoints/
