@@ -44,6 +44,7 @@ class Season:
         games_list = []
         if os.path.isfile(PATH):
             with open(PATH, 'rb') as f:
+                print(f"File already Exists, loading from {PATH}")
                 games_list = pickle.load(f)
 
         else:
@@ -75,9 +76,15 @@ class Season:
         return self.data + season2.data
 
     def clean_data(self):
-
+        """
+        Cleaning data for the data of season. and store it in a pickle file f"{file_path}/PICKLE/{year}_clean.pkl"
+        """ 
         def important_players(players):
-            # Typical list of players: [{'player': {'id': 8475790, 'fullName': 'Erik Gudbranson', 'link': '/api/v1/people/8475790'}, 'playerType': 'Shooter'}, {'player': {'id': 8471734, 'fullName': 'Jonathan Quick', 'link': '/api/v1/people/8471734'}, 'playerType': 'Goalie'}]
+            """
+            :param: players - list of players
+            Typical list of players: [{'player': {'id': 8475790, 'fullName': 'Erik Gudbranson', 'link': '/api/v1/people/8475790'}, 'playerType': 'Shooter'}, {'player': {'id': 8471734, 'fullName': 'Jonathan Quick', 'link': '/api/v1/people/8471734'}, 'playerType': 'Goalie'}]
+            We return the names of goalie and shooter from list of players
+            """
             shooter = np.NaN
             goalie = np.NaN
             for player in players:
@@ -91,6 +98,7 @@ class Season:
         DIRECTORY  = f"{self.file_path}/PICKLE/"
         PATH = f"{DIRECTORY}/{self.year}_clean.pkl"
         if os.path.isfile(PATH):
+            print(f"File already Exists, loading from {PATH}")
             df_clean = pd.read_pickle(PATH)
             self.df_clean = df_clean
         else:
@@ -102,4 +110,6 @@ class Season:
             df_fil_event['shooter'],df_fil_event['goalie'] = zip(*df_fil_event["players"].map(important_players)) ## Choosing Goalie and shooter
             df_clean = df_fil_event.drop(columns=["players"],axis=1).reset_index(drop=True)
             self.df_clean=df_clean
+            df_clean.to_pickle(PATH)
+
         return self.df_clean
