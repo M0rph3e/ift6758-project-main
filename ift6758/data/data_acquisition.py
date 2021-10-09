@@ -4,6 +4,8 @@ import os
 from tqdm import tqdm
 import pickle
 import sys
+import json
+import numpy as np
 
 class Season:
     def __init__(self,year,file_path):
@@ -71,3 +73,33 @@ class Season:
         :return: list[ dicts of all games in two seasons]
         """
         return self.data + season2.data
+
+    def clean_data(self):
+
+        def important_players(players):
+            # Typical list of players: [{'player': {'id': 8475790, 'fullName': 'Erik Gudbranson', 'link': '/api/v1/people/8475790'}, 'playerType': 'Shooter'}, {'player': {'id': 8471734, 'fullName': 'Jonathan Quick', 'link': '/api/v1/people/8471734'}, 'playerType': 'Goalie'}]
+            shooter = np.NaN
+            goalie = np.NaN
+            for player in players:
+                playerType = player.get("playerType", np.NaN)
+                if playerType == "Shooter" or playerType== "Scorer":
+                    shooter = player["player"].get("fullName", np.NaN)
+                elif playerType == "Goalie":
+                    goalie = player["player"].get("fullName", np.NaN)
+            return shooter,goalie
+
+        DIRECTORY  = f"{self.file_path}/PICKLE/"
+        PATH = f"{DIRECTORY}/{self.year}_clean.pkl"
+        if os.path.isfile(PATH):
+            df_clean = pd.read_pickle(PATH)
+            self.df_clean = df_clean
+        else:
+            ## Reference on how to use json_normalize: https://pandas.pydata.org/pandas-docs/version/1.2.0/reference/api/pandas.json_normalize.html
+            df_init = pd.json_normalize(self.data,record_path=['liveData','plays','allPlays'],meta=['gamePk'])
+            select_columns = ["result.event","gamePk","team.name","players","about.period","about.periodTime","about.periodType","about.periodTimeRemaining","coordinates.x","coordinates.y","result.secondaryType","result.emptyNet","result.strength.name"]
+            df_sel = df_init[select_columns]
+            df_fil_event=df_sel[(df_sel["result.event"]=="Shot")| (df_sel["result.event"]=="Goal")]
+            df_fil_event['shooter'],df_fil_event['goalie'] = zip(*df_fil_event["players"].map(important_players)) ## Choosing Goalie and shooter
+            df_clean = df_fil_event.drop(columns=["players"],axis=1).reset_index(drop=True)
+            self.df_clean=df_clean
+        return self.df_clean
