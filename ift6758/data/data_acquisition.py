@@ -19,24 +19,19 @@ class Season:
         """
         self.year = year
         self.file_path = file_path
-        # print("kkk")
-        self.data = self.get_season_data(year,file_path)
+        # self.data = self.get_season_data(year,file_path)
+
         # pass        
-    def get_season_data(self,year, file_path):
+    def get_season_data(self):
         """
         Get the data from the Hockey API in Pickle format for a specific season (year-year+1) and store them to a given file_path. Pickle contains list[dicts of all games in the season]
-
-        :param year: year of the season (example 2017 will download Season 2017-2018)
-        :type year: int
-        :param file_path: Directory where the pickle file for entire season is stored are going to be saved
-        :type file_path: str
 
         :rtype: list[dict]
         :return: list[ dicts of all games in the season],
 
         """
-        YEAR = year
-        DIRECTORY  = f"{file_path}/PICKLE/"
+        YEAR = self.year
+        DIRECTORY  = f"{self.file_path}/PICKLE/"
         PATH = f"{DIRECTORY}/{YEAR}.pkl"
         MAX_GAMES=1300
         os.makedirs(DIRECTORY, exist_ok=True)
@@ -59,21 +54,21 @@ class Season:
                         games_list.append(game_dict)
             with open(PATH,'wb') as f:
                 pickle.dump(games_list,f)
-        print(f"Len of games_list in {year} is {len(games_list)}")
+        print(f"Len of games_list in {YEAR} is {len(games_list)}")
 
         return games_list
 
     def __str__(self):
         return f"Season of Year {self.year}"    
-    def __add__(self,season2):
-        """
-        Add data of other season and return in form of list of all game dicts.
-        :param: season2
-        :type: Season object
-        :rtype: list[dict]
-        :return: list[ dicts of all games in two seasons]
-        """
-        return self.data + season2.data
+    # def __add__(self,season2):
+    #     """
+    #     Add data of other season and return in form of list of all game dicts.
+    #     :param: season2
+    #     :type: Season object
+    #     :rtype: list[dict]
+    #     :return: list[ dicts of all games in two seasons]
+    #     """
+    #     return self.data + season2.data
 
     def clean_data(self):
         """
@@ -100,16 +95,17 @@ class Season:
         if os.path.isfile(PATH):
             print(f"File already Exists, loading from {PATH}")
             df_clean = pd.read_pickle(PATH)
-            self.df_clean = df_clean
+            
         else:
             ## Reference on how to use json_normalize: https://pandas.pydata.org/pandas-docs/version/1.2.0/reference/api/pandas.json_normalize.html
-            df_init = pd.json_normalize(self.data,record_path=['liveData','plays','allPlays'],meta=['gamePk'])
+            data = self.get_season_data(self.year,self.file_path)
+
+            df_init = pd.json_normalize(data,record_path=['liveData','plays','allPlays'],meta=['gamePk'])
             select_columns = ["result.event","gamePk","team.name","players","about.period","about.periodTime","about.periodType","about.periodTimeRemaining","coordinates.x","coordinates.y","result.secondaryType","result.emptyNet","result.strength.name"]
             df_sel = df_init[select_columns]
             df_fil_event=df_sel[(df_sel["result.event"]=="Shot")| (df_sel["result.event"]=="Goal")]
             df_fil_event['shooter'],df_fil_event['goalie'] = zip(*df_fil_event["players"].map(important_players)) ## Choosing Goalie and shooter
             df_clean = df_fil_event.drop(columns=["players"],axis=1).reset_index(drop=True)
-            self.df_clean=df_clean
             df_clean.to_pickle(PATH)
 
-        return self.df_clean
+        return df_clean
