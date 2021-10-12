@@ -22,21 +22,16 @@ class Season:
         # self.data = self.get_season_data(year,file_path)
 
         # pass        
-    def get_season_data(self,year, file_path):
+    def get_season_data(self):
         """
         Get the data from the Hockey API in Pickle format for a specific season (year-year+1) and store them to a given file_path. Pickle contains list[dicts of all games in the season]
-
-        :param year: year of the season (example 2017 will download Season 2017-2018)
-        :type year: int
-        :param file_path: Directory where the pickle file for entire season is stored are going to be saved
-        :type file_path: str
 
         :rtype: list[dict]
         :return: list[ dicts of all games in the season],
 
         """
-        YEAR = year
-        DIRECTORY  = f"{file_path}/PICKLE/"
+        YEAR = self.year
+        DIRECTORY  = f"{self.file_path}/PICKLE/"
         PATH = f"{DIRECTORY}/{YEAR}.pkl"
         MAX_GAMES=1300
         os.makedirs(DIRECTORY, exist_ok=True)
@@ -59,7 +54,7 @@ class Season:
                         games_list.append(game_dict)
             with open(PATH,'wb') as f:
                 pickle.dump(games_list,f)
-        print(f"Len of games_list in {year} is {len(games_list)}")
+        print(f"Len of games_list in {YEAR} is {len(games_list)}")
 
         return games_list
 
