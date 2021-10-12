@@ -2,5 +2,7 @@
 *.pyc
 *.npy
 *.pkl
+*.json
 notebooks/.ipynb_checkpoints/
 ift6758.egg-info/
+*.csv
