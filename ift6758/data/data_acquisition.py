@@ -98,7 +98,7 @@ class Season:
             
         else:
             ## Reference on how to use json_normalize: https://pandas.pydata.org/pandas-docs/version/1.2.0/reference/api/pandas.json_normalize.html
-            data = self.get_season_data(self.year,self.file_path)
+            data = self.get_season_data()
 
             df_init = pd.json_normalize(data,record_path=['liveData','plays','allPlays'],meta=['gamePk'])
             select_columns = ["result.event","gamePk","team.name","players","about.period","about.periodTime","about.periodType","about.periodTimeRemaining","coordinates.x","coordinates.y","result.secondaryType","result.emptyNet","result.strength.name"]
