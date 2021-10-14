@@ -35,7 +35,7 @@ class Season:
         PATH = f"{DIRECTORY}/{YEAR}.pkl"
         MAX_GAMES=1300
         os.makedirs(DIRECTORY, exist_ok=True)
-        season_types = ["01", "02", "03", "04"]
+        season_types = [ "02", "03"]
         games_list = []
         if os.path.isfile(PATH):
             with open(PATH, 'rb') as f:
