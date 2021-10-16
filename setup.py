@@ -6,6 +6,6 @@ setup(
     # package_dir={'': 'src'},
     version='0.1.0',
     description='Sample project repo for IFT6758-2021',
-    author='[FILL IN TEAM MEMBERS]',
+    author='[Sai Kalyan, Yassir, Rakshit, Alaeddin]',
     license='',
 )
