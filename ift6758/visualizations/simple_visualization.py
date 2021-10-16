@@ -46,6 +46,7 @@ class Utilities:
         (Note, we removz 89 from the coordinate to take in account the playable surface on the stadium)
         """
         proba_list = []
+        count_list = []
         for i in range (0,100 ,10):
             j = i+10
             df_temp = df[(df.distance >=i) & (df.distance <j)]
@@ -54,6 +55,9 @@ class Utilities:
             if 'Goal' in df_temp['result.event'].unique():
                 df_temp= df_temp.groupby(['result.event'], as_index=False ).count()
                 proba_list.append(df_temp['count'].iloc[0]/ (df_temp['count'].iloc[0] + df_temp['count'].iloc[1]))
+                count_list.append(df_temp['count'].iloc[0] + df_temp['count'].iloc[1])
             else:
                 proba_list.append(0)
+                count_list.append(0)
+        print(count_list)                
         return proba_list
