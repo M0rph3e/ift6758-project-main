@@ -69,6 +69,32 @@ class Season:
     #     :return: list[ dicts of all games in two seasons]
     #     """
     #     return self.data + season2.data
+    def periodInfo(self):
+        DIRECTORY  = f"{self.file_path}/PICKLE/"
+        PATH = f"{DIRECTORY}/{self.year}_period_info.pkl"
+        if os.path.isfile(PATH):
+            print(f"File already Exists, loading from {PATH}")
+            df_tot = pd.read_pickle(PATH)
+            
+        else:
+            ## Reference on how to use json_normalize: https://pandas.pydata.org/pandas-docs/version/1.2.0/reference/api/pandas.json_normalize.html
+            data = self.get_season_data()
+            df_init = pd.json_normalize(data,record_path=[['liveData','linescore','periods']],meta=['gamePk',['gameData','teams','away','name'],['gameData','teams','home','name']])
+            home_columns= ['periodType', 'startTime', 'endTime', 'num', 'ordinalNum', 'home.goals','home.shotsOnGoal', 'home.rinkSide', 'gamePk', 'gameData.teams.home.name']
+            away_columns= ['periodType', 'startTime', 'endTime', 'num', 'ordinalNum', 'away.goals','away.shotsOnGoal', 'away.rinkSide', 'gamePk', 'gameData.teams.away.name']
+            common_columns = ['periodType', 'startTime', 'endTime', 'num', 'ordinalNum', 'goals', 'shotsOnGoal', 'rinkSide', 'gamePk', 'teamname']
+            df_home = df_init[home_columns].rename(columns=dict(zip(home_columns,common_columns)))
+            df_home["isHomeTeam"]=True
+
+            df_away = df_init[away_columns].rename(columns=dict(zip(away_columns,common_columns)))
+            df_away["isHomeTeam"]=False
+            df_tot = pd.concat([df_home,df_away])
+            df_tot["goalCoordinates"]=df_tot.apply(lambda r: (89,0) if r['rinkSide']=='right' else (-89,0),axis=1)
+            df_tot = df_tot.reset_index(drop=True)
+            df_tot.to_pickle(PATH)
+
+        return df_tot
+
 
     def clean_data(self):
         """
