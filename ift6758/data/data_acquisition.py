@@ -89,7 +89,7 @@ class Season:
             df_away = df_init[away_columns].rename(columns=dict(zip(away_columns,common_columns)))
             df_away["isHomeTeam"]=False
             df_tot = pd.concat([df_home,df_away])
-            df_tot["goalCoordinates"]=df_tot.apply(lambda r: (89,0) if r['rinkSide']=='right' else (-89,0),axis=1)
+            df_tot["goalCoordinates"]=df_tot.apply(lambda r: (-89,0) if r['rinkSide']=='right' else (89,0),axis=1)
             df_tot = df_tot.reset_index(drop=True)
             df_tot.to_pickle(PATH)
 
