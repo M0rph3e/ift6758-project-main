@@ -1,7 +1,6 @@
 from  ift6758.data.data_acquisition import Season
 import pandas as pd
-from ift6758.visualizations.simple_visualization import Utilities 
-
+import ift6758..features.utilities as utilities
 class SeasonDataSetTwo:
     def __init__(self, years):
         """
