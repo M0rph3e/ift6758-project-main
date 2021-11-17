@@ -133,3 +133,27 @@ class Season:
             df_clean.to_pickle(PATH)
 
         return df_clean
+
+    def clean_data_all_events(self):
+
+        DIRECTORY  = f"{self.file_path}/PICKLE/"
+        PATH = f"{DIRECTORY}/{self.year}_clean_all_events.pkl"
+
+        if os.path.isfile(PATH):
+            print(f"File with all events already Exists, loading from {PATH}")
+            df_clean = pd.read_pickle(PATH)
+            
+        else:
+            ## Reference on how to use json_normalize: https://pandas.pydata.org/pandas-docs/version/1.2.0/reference/api/pandas.json_normalize.html
+            data = self.get_season_data()
+
+            df_init = pd.json_normalize(data,record_path=['liveData','plays','allPlays'],meta=['gamePk'])
+            #removed player
+            select_columns = ["result.event","gamePk","team.name","about.period","about.periodTime","about.periodType","about.periodTimeRemaining","coordinates.x","coordinates.y","result.secondaryType","result.emptyNet","result.strength.name"]
+            df_sel = df_init[select_columns]
+            # take all
+            df_clean = df_sel.reset_index(drop=True)
+            df_clean.to_pickle(PATH)
+            print(f"Saved new pickle with all events in {PATH}")
+
+        return df_clean
