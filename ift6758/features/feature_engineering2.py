@@ -107,7 +107,7 @@ class SeasonDataSetTwo:
         df_masked['changeInShotAngle'] = np.where(df_masked['Rebound']==True, np.abs(df_masked['angleNet']-df_masked['last.event.angleNet']) , 0)
         
         #drop unneeded columns
-        df_clean = df_masked.drop(columns=["result.event","about.periodTime","about.periodType","about.periodTimeRemaining","result.strength.name","goalCoordinates","last.event.gamePk","last.event.about.period","last.event.about.periodTime","last.event.angleNet"],axis=1).reset_index(drop=True)
+        df_clean = df_masked.drop(columns=["result.event","about.periodTime","about.periodType","about.periodTimeRemaining","goalCoordinates","last.event.gamePk","last.event.about.period","last.event.about.periodTime","last.event.angleNet"],axis=1).reset_index(drop=True)
         
         df_clean = df_clean.rename({'about.period': 'gamePeriod', 'result.emptyNet': 'emptyNet', 'coordinates.x': 'coordinatesX', 'coordinates.y': 'coordinatesY', 'distanceNet': 'shotDistance', 'angleNet': 'shotAngle', 'result.secondaryType': 'shotType', 'last.event.coordinates.x': 'lastEventCoordinatesX', 'last.event.coordinates.y': 'lastEventCoordinatesY', 'Rebound':'rebound', 'Speed':'speed'}, axis='columns', errors='raise')
 
