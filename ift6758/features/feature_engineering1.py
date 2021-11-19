@@ -50,6 +50,9 @@ class SeasonDataSet:
         # train_years = [2015,2016,2017,2018]
         df_seasons_periods = self.combine_season_periods()
         df_seasons_periods["result.emptyNet"] = df_seasons_periods["result.emptyNet"].fillna(0)
+        df_seasons_periods[df_seasons_periods["result.emptyNet"]==True]=1
+        df_seasons_periods[df_seasons_periods["result.emptyNet"]==False]=0
+
         df_seasons_periods["isGoal"] =df_seasons_periods[["result.event"]].apply(lambda r: 1 if (r["result.event"]=="Goal") else 0,axis=1) ## Add ISGOAL
         df_seasons_periods["distanceNet"]= df_seasons_periods[['coordinates.x','coordinates.y','goalCoordinates']].apply(lambda r: utilities.distance(r["goalCoordinates"],(r["coordinates.x"],r["coordinates.y"])), axis=1)
         df_seasons_periods["angleNet"]= df_seasons_periods[['coordinates.x','coordinates.y','goalCoordinates']].apply(lambda r: utilities.angle(r["goalCoordinates"],(r["coordinates.x"],r["coordinates.y"])), axis=1)
