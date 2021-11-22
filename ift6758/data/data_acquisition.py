@@ -148,8 +148,8 @@ class Season:
             data = self.get_season_data()
 
             df_init = pd.json_normalize(data,record_path=['liveData','plays','allPlays'],meta=['gamePk'])
-            #removed player
-            select_columns = ["result.event","gamePk","team.name","about.period","about.periodTime","about.periodType","about.periodTimeRemaining","coordinates.x","coordinates.y","result.secondaryType","result.emptyNet","result.strength.name"]
+            #removed player (add penalty severity and minutes for power play (Milestone 2 Q4 bonus))
+            select_columns = ["result.event", "result.penaltySeverity", "result.penaltyMinutes","gamePk","team.name","about.period","about.periodTime","about.periodType","about.periodTimeRemaining","coordinates.x","coordinates.y","result.secondaryType","result.emptyNet","result.strength.name"]
             df_sel = df_init[select_columns]
             # take all
             df_clean = df_sel.reset_index(drop=True)
