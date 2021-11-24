@@ -105,7 +105,10 @@ class SeasonDataSetTwo:
 
         #calculate angle difference
         df_masked['changeInShotAngle'] = np.where(df_masked['Rebound']==True, np.abs(df_masked['angleNet']-df_masked['last.event.angleNet']) , 0)
-        
+
+        #Angle Speed
+        df_masked['angleSpeed'] = df_masked['changeInShotAngle'] / df_masked['timeFromLastEvent']
+
         #drop unneeded columns
         df_clean = df_masked.drop(columns=["result.event","about.periodTime","about.periodType","about.periodTimeRemaining","goalCoordinates","last.event.gamePk","last.event.about.period","last.event.about.periodTime","last.event.angleNet"],axis=1).reset_index(drop=True)
         
