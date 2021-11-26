@@ -95,7 +95,7 @@ class SeasonDataSetTwo:
             axis=1)
         
         #add rebound if last event is shot
-        df_masked['Rebound'] = np.where(df_masked['lastEventType']=='Shot', True, False)
+        df_masked['Rebound'] = np.where(df_masked['lastEventType']=='Shot', 1, 0)
         
         #convert timeFromLastEvent column to seconds
         df_masked['timeFromLastEvent'] = df_masked['timeFromLastEvent'].dt.total_seconds()
