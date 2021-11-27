@@ -21,7 +21,7 @@ def plot_calibration(ytrues,yscores,plot_labels=["Model-1"],n_bins=300):
         disp = CalibrationDisplay.from_predictions(ytrue, yscore,n_bins=n_bins,name=plot_label,ax=ax)
     plt.title("Calibration Curves")
     plt.grid()
-    plt.show()
+    #plt.show()
 
 def plot_roc(ytrues,yscores,plot_labels=["model-1"]):
     """
@@ -55,7 +55,7 @@ def plot_roc(ytrues,yscores,plot_labels=["model-1"]):
     plt.ylabel("True Positive Rate")
     plt.title("Receiver operating characteristic example")
     plt.legend(loc="lower right")
-    plt.show()
+    #plt.show()
 
 def plot_percentile(ytrues,yscores,bin_width=1,plot_labels=["Model1"]):
     """
@@ -121,7 +121,7 @@ def plot_percentile(ytrues,yscores,bin_width=1,plot_labels=["Model1"]):
     plot2.set_yticks(range(0,101,10))
     plot2.legend(loc="upper left")
 
-    plt.show()
+    #plt.show()
     
 
 def plotConfusion(Y,Ypred,title="Model1"):
