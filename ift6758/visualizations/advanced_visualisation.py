@@ -9,6 +9,23 @@ import plotly.graph_objects as go
 import pandas as pd
 import json
 
+def time_played(row):
+    """
+    return time in mins
+    """
+    # print(type(row['about.periodTime']))
+    if row['result.event'] == 'GOAL' and row['about.period']>3:
+        # return row['about.periodTime'] + row['about.periodTime']
+        # .date.min()
+        min_sec1 = row['about.periodTime'].split(':')
+        return float(min_sec1[0]) + float(min_sec1[1])/60
+    else:
+        # return row['about.periodTime']
+        # .date.min()
+        min_sec1 = row['about.periodTime'].split(':')
+        min_sec2 = row['about.periodTimeRemaining'].split(':')
+        return float(min_sec1[0]) + float(min_sec2[0]) + (float(min_sec1[1]) +  float(min_sec2[1]))/60
+
 def get_team_time(df_clean):
     sel_columns = ['gamePk','result.event','team.name','about.period','about.periodTime','about.periodTimeRemaining']
     df1 = df_clean[sel_columns].drop_duplicates() 
