@@ -2,12 +2,14 @@ from  ift6758.data.data_acquisition import Season
 import pandas as pd
 import numpy as np
 import ift6758.features.utilities as utilities
+import os
 class SeasonDataSetTwo:
     def __init__(self, years):
         """
         param years : array of in : a year seasons
         """
         self.years = years
+        self.years.sort()
 
     def combine_season_periods(self):
         """
@@ -39,7 +41,7 @@ class SeasonDataSetTwo:
 
         df_seasons = pd.concat(seasons).reset_index(drop=True)
         df_periods = pd.concat(periods).reset_index(drop=True)
-        map_columns = {"periodType": "about.periodType", "num": "about.period","teamname":"team.name" }
+        map_columns = {"periodType": "about.periodType", "num": "about.period","teamname":"team.name","isHomeTeam":"isHome"}
         df_periods_to_join = df_periods[list(map_columns.keys())+["gamePk","goalCoordinates"]].rename(columns=map_columns)
         df_seasons_periods = df_seasons.merge(df_periods_to_join, how='left',on=["about.periodType","about.period","team.name","gamePk"])
         df_seasons_periods["goalCoordinates"] = df_seasons_periods.apply(lambda r: correctionCoordinates(r),axis=1)
@@ -53,11 +55,32 @@ class SeasonDataSetTwo:
         type : Pandas DataFrame
         return : The DataFrame With the basic feature for FE II (4 of Milestone 2) 
         """
+        def time_played(row):
+            """
+            return time in seconds
+            """
+            if row['about.period']>3:
+                ## Overtime is 5 mins and It can go till Shootouts
+                time_secs = 3600 + (row['about.period']-4)*300 + row['gameSeconds']
+                return time_secs
+            else:
+                time_secs =  (row['about.period']-1)*1200 + row['gameSeconds']
+                return time_secs
+        DIRECTORY  = f"../ift6758/data/PICKLE/"
+        file_years = "_".join(map(str,self.years))
+        PATH = f"{DIRECTORY}/{file_years}_features2.pkl"
+        if os.path.isfile(PATH):
+            print(f"File already Exists, loading from {PATH}")
+            df_clean = pd.read_pickle(PATH)
+            return df_clean
+
         # train_years = [2015,2016,2017,2018]
         df_seasons_periods = self.combine_season_periods()
         #GameSeconds
         df_seasons_periods['gameSeconds'] = pd.to_timedelta('00:' + df_seasons_periods['about.periodTime'].astype(str)) #concat '00:' to have the format 'hh:mm:ss'
         df_seasons_periods['gameSeconds'] = df_seasons_periods['gameSeconds'].dt.total_seconds()
+        df_seasons_periods["totalGameSeconds"] = df_seasons_periods[["gameSeconds","about.period"]].apply(lambda r: time_played(r),axis=1)
+
         #We already have Game Period, Coordinates, Shot Type,
         df_seasons_periods["result.emptyNet"] = df_seasons_periods["result.emptyNet"].fillna(0)
         df_seasons_periods["distanceNet"]= df_seasons_periods[['coordinates.x','coordinates.y','goalCoordinates']].apply(lambda r: utilities.distance(r["goalCoordinates"],(r["coordinates.x"],r["coordinates.y"])), axis=1)
@@ -95,7 +118,7 @@ class SeasonDataSetTwo:
             axis=1)
         
         #add rebound if last event is shot
-        df_masked['Rebound'] = np.where(df_masked['lastEventType']=='Shot', 1, 0)
+        df_masked['Rebound'] = np.where(df_masked['lastEventType']=='Shot', True, False)
         
         #convert timeFromLastEvent column to seconds
         df_masked['timeFromLastEvent'] = df_masked['timeFromLastEvent'].dt.total_seconds()
@@ -110,8 +133,11 @@ class SeasonDataSetTwo:
         df_masked['angleSpeed'] = df_masked['changeInShotAngle'] / df_masked['timeFromLastEvent']
 
         #drop unneeded columns
-        df_clean = df_masked.drop(columns=["result.event","about.periodTime","about.periodType","about.periodTimeRemaining","goalCoordinates","last.event.gamePk","last.event.about.period","last.event.about.periodTime","last.event.angleNet"],axis=1).reset_index(drop=True)
+        df_clean = df_masked.drop(columns=["result.event","about.periodTime","about.periodType","about.periodTimeRemaining","goalCoordinates","last.event.gamePk","last.event.about.period","last.event.about.periodTime","last.event.angleNet","result.strength.name","result.penaltySeverity","result.penaltyMinutes"],axis=1).reset_index(drop=True)
         
         df_clean = df_clean.rename({'about.period': 'gamePeriod', 'result.emptyNet': 'emptyNet', 'coordinates.x': 'coordinatesX', 'coordinates.y': 'coordinatesY', 'distanceNet': 'shotDistance', 'angleNet': 'shotAngle', 'result.secondaryType': 'shotType', 'last.event.coordinates.x': 'lastEventCoordinatesX', 'last.event.coordinates.y': 'lastEventCoordinatesY', 'Rebound':'rebound', 'Speed':'speed'}, axis='columns', errors='raise')
+
+        df_clean.to_pickle(PATH)
+
 
         return df_clean
