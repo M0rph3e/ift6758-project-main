@@ -17,8 +17,8 @@ def plot_calibration(ytrues,yscores,plot_labels=["Model-1"],n_bins=300):
     ax = plt.axes()
 
     assert len(ytrues)==len(plot_labels)
-    for ytrue,yscore,plot_label in zip(ytrues,yscores,plot_labels):
-        disp = CalibrationDisplay.from_predictions(ytrue, yscore,n_bins=n_bins,name=plot_label,ax=ax)
+    for i,(ytrue,yscore,plot_label) in enumerate(zip(ytrues,yscores,plot_labels)):
+        disp = CalibrationDisplay.from_predictions(ytrue, yscore,n_bins=n_bins,name=plot_label,ax=ax,alpha=1-i/len(plot_labels))
     plt.title("Calibration Curves")
     plt.grid()
     #plt.show()
@@ -41,12 +41,13 @@ def plot_roc(ytrues,yscores,plot_labels=["model-1"]):
     plt.figure()
     lw = 2
     l=[fprs,tprs,roc_aucs,plot_labels]
-    for fpr,tpr,roc_auc,plot_label in zip(*l):
+    for i,(fpr,tpr,roc_auc,plot_label) in  enumerate(zip(*l)):
         plt.plot(
             fpr,
             tpr,
             lw=lw,
-            label=f"ROC curve (area = {roc_auc:0.2f}) for {plot_label}",
+            label=f"ROC curve (area = {roc_auc:0.3f}) for {plot_label}",
+            alpha=0.7
         )
     plt.plot([0, 1], [0, 1], color="navy", lw=lw, linestyle="--")
     plt.xlim([0.0, 1.0])
@@ -94,12 +95,14 @@ def plot_percentile(ytrues,yscores,bin_width=1,plot_labels=["Model1"]):
         plot1.plot(
             xarray,
             goal_rate_values,
-            label = plot_label
+            label = plot_label,
+            alpha=0.5
         )
         plot2.plot(
             xarray,
             cumulative_goals_percentage,
-            label = plot_label
+            label = plot_label,
+            alpha=0.5
         )
     
     plot1.set_title("Goal Rate")
