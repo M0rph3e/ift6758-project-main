@@ -24,7 +24,7 @@ LOG_FILE = os.environ.get("FLASK_LOG", "flask.log")
 
 
 app = Flask(__name__)
-
+global model
 
 @app.before_first_request
 def before_first_request():
@@ -33,7 +33,9 @@ def before_first_request():
     setup logging handler, etc.)
     """
     # TODO: setup basic logging configuration
-    logging.basicConfig(filename=LOG_FILE, level=logging.INFO)
+    logging.basicConfig(filename=LOG_FILE, level=logging.INFO, filemode='w') #filemode='w' to clear the log file for each run
+    app.logger.info('Welcome to the work of Team 11')
+    app.logger.info('Initialization')
 
     # TODO: any other initialization before the first request (e.g. load default model)
     pass
