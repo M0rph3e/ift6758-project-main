@@ -12,3 +12,4 @@ ift6758.egg-info/
 *.zip
 *.jpg
 nopush.ipynb
+flask.log
