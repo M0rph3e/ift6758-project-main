@@ -41,12 +41,15 @@ def before_first_request():
     app.logger.info('Initialization')
     # TODO: any other initialization before the first request (e.g. load default model)
     # pass
-    default_model = "logreg-dis-angle-yearvalidation.pkl"
-    file_path = f"{MODELS_DIR}/{default_model}"
+    default_model = "logreg-dis-angle"
+    file_path = f"{MODELS_DIR}/{default_model}.pkl"
     if os.path.isfile(file_path):
         model = default_model
     else:
         model = default_model
+        app.logger.info(f"Downloading from COMET {model}")
+        get_comet_model(model,MODELS_DIR,download=True,workspace="morph-e")
+
 
 
     clf = joblib.load(file_path)
@@ -127,7 +130,7 @@ def download_registry_model():
 
     # raise NotImplementedError("TODO: implement this endpoint")
 
-    response = {"new_classifier": clf}
+    response = {"new_classifier": model_swap}
 
     app.logger.info(response)
     return jsonify(response)  # response must be json serializable!
