@@ -15,16 +15,18 @@ from flask import Flask, jsonify, request, abort
 import sklearn
 import pandas as pd
 import joblib
-
+from ift6758.comet_utils import get_comet_model
 
 import ift6758
 
 
 LOG_FILE = os.environ.get("FLASK_LOG", "flask.log")
+MODELS_DIR = os.environ.get("FLASK_MODELS","downloaded_models/")
 
-
-app = Flask(__name__)
 global model
+global clf
+app = Flask(__name__)
+
 
 @app.before_first_request
 def before_first_request():
@@ -32,13 +34,27 @@ def before_first_request():
     Hook to handle any initialization before the first request (e.g. load model,
     setup logging handler, etc.)
     """
+    global clf,model
     # TODO: setup basic logging configuration
     logging.basicConfig(filename=LOG_FILE, level=logging.INFO, filemode='w') #filemode='w' to clear the log file for each run
     app.logger.info('Welcome to the work of Team 11')
     app.logger.info('Initialization')
-
     # TODO: any other initialization before the first request (e.g. load default model)
-    pass
+    # pass
+    default_model = "logreg-dis-angle-yearvalidation.pkl"
+    file_path = f"{MODELS_DIR}/{default_model}"
+    if os.path.isfile(file_path):
+        model = default_model
+    else:
+        model = default_model
+
+
+    clf = joblib.load(file_path)
+    app.logger.info(f"Default Classifier Loaded {default_model}")
+
+    # else:
+
+
 
 
 @app.route("/logs", methods=["GET"])
@@ -46,10 +62,11 @@ def logs():
     """Reads data from the log file and returns them as the response"""
     
     # TODO: read the log file specified and return the data
-    with open(LOG_FILE, 'r') as f:
-        log = f.read()
-
-    response = log
+    with open(LOG_FILE,'r') as lf:
+        response = lf.read()
+    return jsonify(response)  # response must be json serializable!
+    raise NotImplementedError("TODO: implement this endpoint")
+    response = None
     return jsonify(response)  # response must be json serializable!
 
 
@@ -70,12 +87,34 @@ def download_registry_model():
         }
     
     """
+    global clf,model
+
     # Get POST json data
     json = request.get_json()
     app.logger.info(json)
 
     # TODO: check to see if the model you are querying for is already downloaded
+    model_swap = json["model"]
+    workspace = json["workspace"]
+    version = json["version"]
 
+    file_model_path = f"{MODELS_DIR}/{model_swap}.pkl"
+
+    if os.path.isfile(file_model_path):
+        model = model_swap
+        app.logger.info(f"{model} already stored")
+    else:
+        model = model_swap
+        app.logger.info(f"Downloading from COMET {model}")
+        get_comet_model(model_swap,MODELS_DIR,download=True,workspace=workspace, model_version=version)
+
+
+    clf = joblib.load(file_model_path)
+    app.logger.info(f"Classifier Swapped with {model}")
+
+        
+
+    # response = {"clf":clf}
     # TODO: if yes, load that model and write to the log about the model change.  
     # eg: app.logger.info(<LOG STRING>)
     
@@ -86,9 +125,9 @@ def download_registry_model():
     # Tip: you can implement a "CometMLClient" similar to your App client to abstract all of this
     # logic and querying of the CometML servers away to keep it clean here
 
-    raise NotImplementedError("TODO: implement this endpoint")
+    # raise NotImplementedError("TODO: implement this endpoint")
 
-    response = None
+    response = {"new_classifier": clf}
 
     app.logger.info(response)
     return jsonify(response)  # response must be json serializable!
@@ -101,14 +140,16 @@ def predict():
 
     Returns predictions
     """
+
     # Get POST json data
     json = request.get_json()
     app.logger.info(json)
-
-    # TODO:
-    raise NotImplementedError("TODO: implement this enpdoint")
+    X_pred =pd.DataFrame.from_dict(json)
+    y_pred = clf.predict(X_pred)
+    X_pred["predictions"] = y_pred
     
-    response = None
-
+    response = X_pred["predictions"].to_json()
     app.logger.info(response)
+
     return jsonify(response)  # response must be json serializable!
+
