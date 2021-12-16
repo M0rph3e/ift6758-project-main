@@ -44,9 +44,10 @@ def logs():
     """Reads data from the log file and returns them as the response"""
     
     # TODO: read the log file specified and return the data
-    raise NotImplementedError("TODO: implement this endpoint")
+    with open(LOG_FILE, 'r') as f:
+        log = f.read()
 
-    response = None
+    response = log
     return jsonify(response)  # response must be json serializable!
 
 
