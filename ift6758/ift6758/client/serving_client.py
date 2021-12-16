@@ -13,7 +13,7 @@ class ServingClient:
         logger.info(f"Initializing client; base URL: {self.base_url}")
 
         if features is None:
-            features = ["distance"]
+            features = ["distanceNet", "angleNet"]
         self.features = features
 
         # any other potential initialization
@@ -33,7 +33,10 @@ class ServingClient:
     def logs(self) -> dict:
         """Get server logs"""
 
-        raise NotImplementedError("TODO: implement this function")
+        url = self.base_url + '/logs'
+        logger.info("Requested Logs")
+        json = requests.post(url)
+        print(json.text)
 
     def download_registry_model(self, workspace: str, model: str, version: str) -> dict:
         """
@@ -51,4 +54,8 @@ class ServingClient:
             version (str): The model version to download
         """
 
-        raise NotImplementedError("TODO: implement this function")
+        url = self.base_url + '/download_registry_model'
+        logger.info("Requested Model Swap")
+        json = requests.post(url)
+        print(json.text)
+
