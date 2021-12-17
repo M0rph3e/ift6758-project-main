@@ -13,7 +13,7 @@ class ServingClient:
         logger.info(f"Initializing client; base URL: {self.base_url}")
 
         if features is None:
-            features = ["distanceNet", "angleNet"]
+            features = ["shotDistance", "shotAngle"]
         self.features = features
 
         # any other potential initialization
@@ -27,7 +27,15 @@ class ServingClient:
         Args:
             X (Dataframe): Input dataframe to submit to the prediction service.
         """
+        url = self.base_url + '/predict'
+        X_model = X[self.features]
+        out_json = requests.post(url, 
+            json=json.loads(X_model.to_json())
+        )
+        logger.info("Requested Predictions")
 
+        y_preds = pd.DataFrame.from_dict(out_json)
+        return y_preds
         raise NotImplementedError("TODO: implement this function")
 
     def logs(self) -> dict:
@@ -35,8 +43,9 @@ class ServingClient:
 
         url = self.base_url + '/logs'
         logger.info("Requested Logs")
-        json = requests.post(url)
-        print(json.text)
+        out_json = requests.get(url)
+        print(out_json.text)
+        return out_json
 
     def download_registry_model(self, workspace: str, model: str, version: str) -> dict:
         """
@@ -56,6 +65,12 @@ class ServingClient:
 
         url = self.base_url + '/download_registry_model'
         logger.info("Requested Model Swap")
-        json = requests.post(url)
-        print(json.text)
+        requests_json = {
+            "workspace": workspace,
+            "model": model,
+            "version": version,
+        }
+        out_json = requests.post(url,json=requests_json)
+        # print(out_json)
+        return out_json
 
