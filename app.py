@@ -149,9 +149,11 @@ def predict():
     app.logger.info(json)
     X_pred =pd.DataFrame.from_dict(json)
     y_pred = clf.predict(X_pred)
-    X_pred["predictions"] = y_pred
+    y_predproba = clf.predict_proba(X_pred)[:,1]
+    X_pred["predictionIsGoal"] = y_pred
+    X_pred["probaIsGoal"] = y_predproba
     
-    response = X_pred["predictions"].to_json()
+    response = X_pred[["probaIsGoal","predictionIsGoal"]].to_json()
     app.logger.info(response)
 
     return jsonify(response)  # response must be json serializable!
