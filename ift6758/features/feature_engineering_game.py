@@ -154,4 +154,4 @@ class GameData:
 
 
 
-        return df_clean,df_seasons_periods.shape[0]-1
+        return df_clean,df_seasons_periods.iloc[-1]
