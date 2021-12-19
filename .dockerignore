@@ -1,0 +1,14 @@
+.dockerignore
+**/*.git
+
+!/logreg-distance-angle.pkl
+
+**/*.pkl
+
+**/*.json
+
+#Exclude useless files
+**/notebooks/*
+**/figures/*
+**/ift6758/visualizations/*
+**/ift6758/metrics/*
