@@ -30,12 +30,12 @@ class ServingClient:
         url = self.base_url + '/predict'
         X_model = X[self.features]
         out_json = requests.post(url, 
-            json=json.loads(X_model.to_json())
+            json=X_model.to_json(orient="table")
         )
         logger.info("Requested Predictions")
-        preds_json =json.loads(out_json.json())
+        preds_json =out_json.json()
         # y_preds = preds_json.values()
-        Y_preds =pd.DataFrame.from_dict(preds_json)
+        Y_preds =pd.read_json(preds_json)
 
         return Y_preds
         raise NotImplementedError("TODO: implement this function")

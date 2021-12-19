@@ -148,7 +148,7 @@ def predict():
     # Get POST json data
     json = request.get_json()
     app.logger.info(json)
-    X_pred =pd.DataFrame.from_dict(json)
+    X_pred =pd.read_json(json,orient="table")
     y_pred = clf.predict(X_pred)
     y_predproba = clf.predict_proba(X_pred)[:,1]
     X_pred["predictionIsGoal"] = y_pred
