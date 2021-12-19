@@ -67,10 +67,7 @@ def logs():
     
     # TODO: read the log file specified and return the data
     with open(LOG_FILE,'r') as lf:
-        response = lf.read()
-    return jsonify(response)  # response must be json serializable!
-    raise NotImplementedError("TODO: implement this endpoint")
-    response = None
+        response = lf.readlind()
     return jsonify(response)  # response must be json serializable!
 
 
@@ -158,6 +155,3 @@ def predict():
     app.logger.info(response)
 
     return jsonify(response)  # response must be json serializable!
-
-if __name__ == '__main__':
-   serve(app, host='0.0.0.0')
