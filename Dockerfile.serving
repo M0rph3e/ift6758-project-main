@@ -45,13 +45,14 @@ WORKDIR /code
 
 
 # TODO: add code, optionally a default model if you want 
-
+COPY . /code/
 
 # TODO: install libs
-
+RUN pip install -r requirements.txt
 
 # TODO: expose ports (or do this in docker-compose)
-
+EXPOSE 5000
 
 # TODO: specify default command - this is not required because you can always specify the command
 # either with the docker run command or in the docker-compose file
+CMD flask run --host 0.0.0.0

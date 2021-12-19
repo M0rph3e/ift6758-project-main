@@ -15,6 +15,7 @@ from flask import Flask, jsonify, request, abort
 import sklearn
 import pandas as pd
 import joblib
+from waitress import serve
 from ift6758.comet_utils import get_comet_model
 
 import ift6758
@@ -158,3 +159,5 @@ def predict():
 
     return jsonify(response)  # response must be json serializable!
 
+if __name__ == '__main__':
+   serve(app, host='0.0.0.0')
