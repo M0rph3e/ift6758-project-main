@@ -8,9 +8,12 @@ services:
       dockerfile: ./Dockerfile.serving
       args:
         COMET_API_KEY: ${COMET_API_KEY}
-    image: ift6758/serving:1.0.0
+    image: ift6758/serving:latest
     ports:
-      - 5000:5000
+      - "5000:5000"
+    environment:
+      COMET_API_KEY: ${COMET_API_KEY}
+
 ###### Uncomment below when you're ready to add the final notebook container to your docker compose
 ##  jupyter:
 ##    build:
