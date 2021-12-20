@@ -41,7 +41,6 @@ def before_first_request():
     app.logger.info('Welcome to the work of Team 11')
     app.logger.info('Initialization')
     # TODO: any other initialization before the first request (e.g. load default model)
-    # pass
     default_model = "logreg-distance-angle"
     file_path = f"{MODELS_DIR}/{default_model}.pkl"
     if os.path.isfile(file_path):
