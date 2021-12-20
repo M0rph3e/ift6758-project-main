@@ -6,9 +6,10 @@
 **/*.pkl
 
 **/*.json
-
+**/*.ipynb
+!demo.ipynb
 #Exclude useless files
-**/notebooks/*
-**/figures/*
-**/ift6758/visualizations/*
-**/ift6758/metrics/*
+notebooks/**/*
+figures/**/*
+ift6758/visualizations/**
+ift6758/metrics/**
