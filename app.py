@@ -67,7 +67,7 @@ def logs():
     
     # TODO: read the log file specified and return the data
     with open(LOG_FILE,'r') as lf:
-        response = lf.readlind()
+        response = lf.readline()
     return jsonify(response)  # response must be json serializable!
 
 
@@ -126,7 +126,6 @@ def download_registry_model():
     # Tip: you can implement a "CometMLClient" similar to your App client to abstract all of this
     # logic and querying of the CometML servers away to keep it clean here
 
-    # raise NotImplementedError("TODO: implement this endpoint")
 
     response = {"new_classifier": model_swap}
 
