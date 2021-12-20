@@ -10,22 +10,22 @@ services:
         COMET_API_KEY: ${COMET_API_KEY}
     image: ift6758/serving:latest
     ports:
-      - "5000:5000"
+      - 5000:5000
     environment:
       COMET_API_KEY: ${COMET_API_KEY}
 
-###### Uncomment below when you're ready to add the final notebook container to your docker compose
-##  jupyter:
-##    build:
-##      context: ./
-##      dockerfile: ./Dockerfile.jupyter
-##      args:
-##        ARG: <ARG>
-##    image: ift6758/jupyter:<TAG>
-##    ports:
-##      - <JUPYTER_PORT>:<JUPYTER_PORT>
-##    environment:
-##      OTHER_DOCKER_ENV_VAR = ${OTHER_LOCAL_ENV_VAR}
+#### Uncomment below when you're ready to add the final notebook container to your docker compose
+#  jupyter:
+#    build:
+#      context: ./
+#      dockerfile: ./Dockerfile.jupyter
+#      args:
+#        ARG: <ARG>
+#    image: ift6758/jupyter:<TAG>
+#    ports:
+#      - <JUPYTER_PORT>:<JUPYTER_PORT>
+#    environment:
+#      OTHER_DOCKER_ENV_VAR = ${OTHER_LOCAL_ENV_VAR}
       
 
      

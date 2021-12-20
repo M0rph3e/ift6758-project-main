@@ -17,3 +17,4 @@ flask
 sklearn
 waitress
 comet_ml
+xgboost
