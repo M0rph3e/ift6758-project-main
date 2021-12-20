@@ -67,7 +67,7 @@ def logs():
     
     # TODO: read the log file specified and return the data
     with open(LOG_FILE,'r') as lf:
-        response = lf.readline()
+        response = lf.readlines()
     return jsonify(response)  # response must be json serializable!
 
 
