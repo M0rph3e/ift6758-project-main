@@ -11,6 +11,19 @@ class GameData:
         param gameId : gameId
         """
         self.gameId = gameId
+        r = requests.get(f"https://statsapi.web.nhl.com/api/v1/game/{self.gameId}/feed/live/")
+        self.game_dict = r.json()
+        # if self.gameId == "2021020473":
+        #     import json
+        #     with open(r"D:\Masters\Semester1\IFT6758\ift6758-project-main\ift6758\data\JSON\2021020473_part_2.json") as json_file:
+        #         self.game_dict =json.load(json_file)
+        
+    def getHomeAway(self):
+        ## DEBUG
+        
+        data = self.game_dict
+        return {"home": data["gameData"]["teams"]["home"]["name"] ,"away": data["gameData"]["teams"]["away"]["name"]}
+
     def periodInfo(self,data):
         ## Reference on how to use json_normalize: https://pandas.pydata.org/pandas-docs/version/1.2.0/reference/api/pandas.json_normalize.html
         df_init = pd.json_normalize(data,record_path=[['liveData','linescore','periods']],meta=['gamePk',['gameData','teams','away','name'],['gameData','teams','home','name']])
@@ -58,13 +71,10 @@ class GameData:
                 else:
                     return (-89,0)
         
-        r = requests.get(f"https://statsapi.web.nhl.com/api/v1/game/{self.gameId}/feed/live/")
-        if r.status_code == 200:
-            game_dict = r.json()
-        else:
-            return
-        df_seasons = self.clean_data_all_events(game_dict)
-        df_periods = self.periodInfo(game_dict)
+        
+        
+        df_seasons = self.clean_data_all_events(self.game_dict)
+        df_periods = self.periodInfo(self.game_dict)
         map_columns = {"periodType": "about.periodType", "num": "about.period","teamname":"team.name","isHomeTeam":"isHome"}
         df_periods_to_join = df_periods[list(map_columns.keys())+["gamePk","goalCoordinates"]].rename(columns=map_columns)
         df_seasons_periods = df_seasons.merge(df_periods_to_join, how='left',on=["about.periodType","about.period","team.name","gamePk"])

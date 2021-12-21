@@ -93,7 +93,7 @@ def download_registry_model():
     # Get POST json data
     json = request.get_json()
     app.logger.info(json)
-
+    model_already_exists = True
     # TODO: check to see if the model you are querying for is already downloaded
     model_swap = json["model"]
     workspace = json["workspace"]
@@ -104,10 +104,13 @@ def download_registry_model():
     if os.path.isfile(file_model_path):
         model = model_swap
         app.logger.info(f"{model} already stored")
+        model_already_exists = True
+
     else:
         model = model_swap
         app.logger.info(f"Downloading from COMET {model}")
         get_comet_model(model_swap,MODELS_DIR,download=True,workspace=workspace, model_version=version)
+        model_already_exists = False
 
 
     clf = joblib.load(file_model_path)
@@ -127,7 +130,7 @@ def download_registry_model():
     # logic and querying of the CometML servers away to keep it clean here
 
 
-    response = {"new_classifier": model_swap}
+    response = {"new_classifier": model_swap,"model_already_exists":model_already_exists}
 
     app.logger.info(response)
     return jsonify(response)  # response must be json serializable!
