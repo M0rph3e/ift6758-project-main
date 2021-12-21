@@ -21,7 +21,7 @@ logger = logging.getLogger(__name__)
 
 
 class DisplayClient():
-    def __init__(self,ip: str = "127.0.0.1"):
+    def __init__(self,ip: str = "127.0.0.1",port: int = 5000):
         logger.info(f"Initializing display client")
         #CHOOSE WORKSPACE
         workspace_list = ["morph-e"]
@@ -77,7 +77,7 @@ class DisplayClient():
         ### Logic and Calculation
         self.game_non_processed_event = 0
         self.gc = GameClient()
-        self.sc = ServingClient(ip=ip)
+        self.sc = ServingClient(ip=ip,port=port)
         self.prev_game_id = 0
         self.xGHome = 0
         self.xGAway = 0
