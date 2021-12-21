@@ -9,6 +9,8 @@ services:
       args:
         COMET_API_KEY: ${COMET_API_KEY}
     image: ift6758/serving:latest
+    networks:
+      - serving
     ports:
       - 5000:5000
     environment:
@@ -23,7 +25,7 @@ services:
         COMET_API_KEY: ${COMET_API_KEY}
     image: ift6758/jupyter:latest
     networks:
-      - service1
+      - jupyter
     ports:
       - 8888:8888
     environment:
@@ -32,6 +34,4 @@ services:
 networks:
   service1:
     
-      
-
      
