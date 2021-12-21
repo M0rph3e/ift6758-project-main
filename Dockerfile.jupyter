@@ -47,6 +47,8 @@ WORKDIR /code
 # TODO: add code, optionally a default model if you want 
 COPY requirements.txt /code/
 COPY demo.ipynb /code/
+COPY ift6758/ /code/
+
 ARG COMET_API_KEY
 RUN echo ${COMET_API_KEY}
 ENV COMET_API_KEY=${COMET_API_KEY} 
