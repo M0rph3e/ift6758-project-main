@@ -51,7 +51,6 @@ ARG COMET_API_KEY
 #RUN echo ${COMET_API_KEY}
 ENV COMET_API_KEY=${COMET_API_KEY} 
 # TODO: install libs
-#RUN pip install -e .
 RUN pip install -r requirements.txt
 RUN pip install -e .
 # TODO: expose ports (or do this in docker-compose)
