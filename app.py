@@ -28,6 +28,7 @@ global model
 global clf
 app = Flask(__name__)
 
+logging.basicConfig(filename=LOG_FILE, level=logging.INFO, filemode='w') #filemode='w' to clear the log file for each run
 
 @app.before_first_request
 def before_first_request():
@@ -37,7 +38,7 @@ def before_first_request():
     """
     global clf,model
     # TODO: setup basic logging configuration
-    logging.basicConfig(filename=LOG_FILE, level=logging.INFO, filemode='w') #filemode='w' to clear the log file for each run
+    #logging.basicConfig(filename=LOG_FILE, level=logging.INFO, filemode='w') #filemode='w' to clear the log file for each run
     app.logger.info('Welcome to the work of Team 11')
     app.logger.info('Initialization')
     # TODO: any other initialization before the first request (e.g. load default model)
