@@ -12,7 +12,7 @@ logger = logging.getLogger(__name__)
 class GameClient:
     def __init__(self):
         logger.info(f"Initializing gaming client")
-    def ping_game(self,game_id: int,non_processed_event: int=0) -> tuple[pd.DataFrame,pd.Series,dict]:
+    def ping_game(self,game_id: int,non_processed_event: int=0):
         """
         gameId: Features engineering 2 (milestone 2) DF of the game
         non_processed_event: events or shots that took place >= this event are returned
