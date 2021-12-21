@@ -10,7 +10,7 @@ services:
         COMET_API_KEY: ${COMET_API_KEY}
     image: ift6758/serving:latest
     networks:
-      - serving
+      - milestone3
     ports:
       - 5000:5000
     environment:
@@ -25,14 +25,13 @@ services:
         COMET_API_KEY: ${COMET_API_KEY}
     image: ift6758/jupyter:latest
     networks:
-      - jupyter
+      - milestone3
     ports:
       - 8888:8888
     environment:
       COMET_API_KEY: ${COMET_API_KEY}
-      PASSWORD: team11
 networks:
-  serving:
-  jupyter:
+  milestone3:
+  
     
      
