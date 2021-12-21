@@ -17,3 +17,9 @@ dependencies:
   - ipywidgets
   - jupyterlab>=3.0.0
   - ipdb
+  - scikit-optimize
+  - copy 
+  - xgboost
+  - tabulate
+  - comet_ml
+  - joblib
