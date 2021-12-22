@@ -27,13 +27,15 @@ class GameData:
     def periodInfo(self,data):
         ## Reference on how to use json_normalize: https://pandas.pydata.org/pandas-docs/version/1.2.0/reference/api/pandas.json_normalize.html
         df_init = pd.json_normalize(data,record_path=[['liveData','linescore','periods']],meta=['gamePk',['gameData','teams','away','name'],['gameData','teams','home','name']])
-        home_columns= ['periodType', 'startTime', 'endTime', 'num', 'ordinalNum', 'home.goals','home.shotsOnGoal', 'home.rinkSide', 'gamePk', 'gameData.teams.home.name']
-        away_columns= ['periodType', 'startTime', 'endTime', 'num', 'ordinalNum', 'away.goals','away.shotsOnGoal', 'away.rinkSide', 'gamePk', 'gameData.teams.away.name']
-        common_columns = ['periodType', 'startTime', 'endTime', 'num', 'ordinalNum', 'goals', 'shotsOnGoal', 'rinkSide', 'gamePk', 'teamname']
-        df_home = df_init[home_columns].rename(columns=dict(zip(home_columns,common_columns)))
+        home_columns= ['periodType', 'num', 'ordinalNum', 'home.goals','home.shotsOnGoal', 'home.rinkSide', 'gamePk', 'gameData.teams.home.name']
+        away_columns= ['periodType', 'num', 'ordinalNum', 'away.goals','away.shotsOnGoal', 'away.rinkSide', 'gamePk', 'gameData.teams.away.name']
+        common_columns = ['periodType', 'num', 'ordinalNum', 'goals', 'shotsOnGoal', 'rinkSide', 'gamePk', 'teamname']
+        df_home = df_init.reindex(columns = home_columns)
+        df_home = df_home[home_columns].rename(columns=dict(zip(home_columns,common_columns)))
         df_home["isHomeTeam"]=True
 
-        df_away = df_init[away_columns].rename(columns=dict(zip(away_columns,common_columns)))
+        df_away = df_init.reindex(columns = away_columns)
+        df_away = df_away.rename(columns=dict(zip(away_columns,common_columns)))
         df_away["isHomeTeam"]=False
         df_tot = pd.concat([df_home,df_away])
         df_tot["goalCoordinates"]=df_tot.apply(lambda r: (-89,0) if r['rinkSide']=='right' else ((89,0) if r['rinkSide']=='left'  else np.nan),axis=1)
