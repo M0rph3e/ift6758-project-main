@@ -54,9 +54,9 @@ ENV COMET_API_KEY=${COMET_API_KEY}
 RUN pip install -r requirements.txt
 RUN pip install -e .
 #Remove all unecessary files/folder (doing it one by one because big FML)
-RUN rm *.sh .gitignore *md *txt *.yaml *.yml
-RUN rm -rf  notebooks ift6758.egg-info scripts figures __pycache__ .ipynb_checkpoints downloaded_models
-RUN rm Dockerfile* *.py *.log
+RUN rm *.sh *.gitignore *.md *.txt *.yaml *.yml || true
+RUN rm -rf  notebooks ift6758.egg-info scripts figures __pycache__ *.ipynb_checkpoints downloaded_models || true
+RUN rm Dockerfile* *.py *.log || true
 # TODO: expose ports (or do this in docker-compose)
 
 
