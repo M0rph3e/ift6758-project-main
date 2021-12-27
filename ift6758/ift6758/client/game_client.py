@@ -12,12 +12,13 @@ logger = logging.getLogger(__name__)
 class GameClient:
     def __init__(self):
         logger.info(f"Initializing gaming client")
-    def ping_game(self,game_id: int,non_processed_event: int=0) -> tuple[pd.DataFrame,int]:
+    def ping_game(self,game_id: int,non_processed_event: int=0):
         """
         gameId: Features engineering 2 (milestone 2) DF of the game
         non_processed_event: events or shots that took place >= this event are returned
         """
         game_data = GameData(gameId=game_id)
+        home_away = game_data.getHomeAway()
         df_game,last_event = game_data.get_features_2()
         df_game_filtered = df_game.loc[df_game["eventId"]>=non_processed_event]
         
@@ -35,4 +36,4 @@ class GameClient:
         df_game_filtered.replace([np.inf, -np.inf], np.nan, inplace=True)
         df_game_filtered.replace([np.inf, -np.inf], np.nan, inplace=True)
         df_game_filtered["changeInShotAngle"].replace(0,np.nan,inplace=True)
-        return df_game_filtered,last_event
+        return df_game_filtered,last_event,home_away

@@ -17,6 +17,8 @@ class ServingClient:
         self.features = features
 
         # any other potential initialization
+    def update_features(self,new_fetaures):
+        self.features = new_fetaures
 
     def predict(self, X: pd.DataFrame) -> pd.DataFrame:
         """
